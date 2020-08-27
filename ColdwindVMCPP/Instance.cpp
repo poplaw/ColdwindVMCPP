@@ -153,12 +153,12 @@ namespace VM
 
 		auto handler = opcodes[opcode.value()].handler;
 
-		std::string vs;
+		/*std::string vs;
 		std::for_each(argumentBytes.value().begin(), argumentBytes.value().end(),
 			[&vs](std::uint_fast8_t x)->void {vs += (int)x; }
 		);
 
-		std::cout << pc.value << '\t' << (int)opcode.value() << '\t' << vs << '\n';
+		std::cout << pc.value << '\t' << (int)opcode.value() << '\t' << vs << '\n';*/
 
 		pc.value += (1 + length);
 		handler(*this, argumentBytes.value());
@@ -168,6 +168,8 @@ namespace VM
 	{
 		while (!terminated)
 			runSingleStep();
+
+		deviceConsole->terminate();
 
 		exit(0);
 	}

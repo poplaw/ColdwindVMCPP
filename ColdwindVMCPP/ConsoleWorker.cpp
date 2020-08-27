@@ -3,13 +3,28 @@
 namespace VM
 {
 	ConsoleWorker::ConsoleWorker(DeviceConsole& consoleDev)
-		: consoleDev(consoleDev), shallShutdown(false)
+		: consoleDev(consoleDev), shutdownLock(shutdownMutex), ready{ false }
 	{
+		
 	}
 
 	void ConsoleWorker::run()
 	{
-		/*while(!shallShutdown)*/
+		shutdown.wait(shutdownLock, [this] {return ready; });
+
+		char buffer[1];
+		auto ch = fread(buffer, 1, 1, stdin);
+		if (ch == '\0')
+		{
+			return;
+		}
+
+		{
+			std::lock_guard<std::mutex> guard(queueMutex);
+			queue.emplace(ch);
+		}
+
+		consoleDev.newDataReady();
 	}
 
 	char ConsoleWorker::getCharacter()
@@ -33,10 +48,5 @@ namespace VM
 		auto res = (queue.size() > 0);
 		queueMutex.unlock();
 		return res;
-	}
-
-	void ConsoleWorker::terminate()
-	{
-		shallShutdown = true;
 	}
 }

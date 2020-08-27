@@ -12,18 +12,19 @@ namespace VM
 
 	class ConsoleWorker
 	{
-		bool shallShutdown;
-		std::thread thread;
 		std::queue<char> queue;
 		std::mutex queueMutex;
 		DeviceConsole& consoleDev;
+		std::mutex shutdownMutex;
+		std::unique_lock<std::mutex> shutdownLock;
+		bool ready;
 
 	public:
+		std::condition_variable shutdown;
 		ConsoleWorker(DeviceConsole& consoleDev);
 		void run();
 		char getCharacter();
 		bool dataReady();
-		void terminate();
 	};
 
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <mutex>
+#include <thread>
 
 #include "Instance.h"
 #include "ConsoleWorker.h"
@@ -12,6 +13,7 @@ namespace VM
 
 	class DeviceConsole
 	{
+		std::thread *workerThread;
 		Instance& vm;
 		ConsoleWorker* worker;
 		std::mutex controlRegisterMutex;
@@ -23,6 +25,7 @@ namespace VM
 		void newDataReady();
 		void handleInbound(std::int_fast16_t port, std::uint_fast8_t byte);
 		void handleOutbound(std::int_fast16_t port);
+		void terminate();
 	};
 }
 

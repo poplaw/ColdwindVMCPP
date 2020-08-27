@@ -5,12 +5,14 @@ namespace VM
 	DeviceConsole::DeviceConsole(Instance& vm)
 		: vm(vm), controlRegister(0), worker(new ConsoleWorker(*this))
 	{
-		//worker->start();
+		workerThread = new std::thread(&ConsoleWorker::run, worker);
 	}
 
 	DeviceConsole::~DeviceConsole()
 	{
+		workerThread->join();
 		delete worker;
+		delete workerThread;
 	}
 
 	void DeviceConsole::newDataReady()
@@ -61,5 +63,10 @@ namespace VM
 				
 			}
 		}
+	}
+
+	void DeviceConsole::terminate()
+	{
+		worker->shutdown.notify_all();
 	}
 }
