@@ -4,28 +4,26 @@
 #include <thread>
 
 #include "Instance.h"
-#include "ConsoleWorker.h"
 
 namespace VM
 {
 	extern class Instance;
-	extern class ConsoleWorker;
+	extern class TimeWorker;
 
-	class DeviceConsole
+	class DeviceTimer
 	{
-		std::thread *workerThread;
+		std::thread* workerThread;
 		Instance& vm;
-		ConsoleWorker* worker;
-		std::mutex controlRegisterMutex;
+		TimeWorker* worker;
 		std::int_fast16_t controlRegister;
+		std::int_fast16_t remainingCounterValue;
+		bool hasCounterData = false;
 
 	public:
-		DeviceConsole(Instance& vm);
-		~DeviceConsole();
-		void newDataReady();
+		DeviceTimer(Instance& vm);
+		~DeviceTimer();
 		void handleInbound(std::int_fast16_t port, std::uint_fast8_t byte);
 		char handleOutbound(std::int_fast16_t port);
 		void terminate();
 	};
 }
-

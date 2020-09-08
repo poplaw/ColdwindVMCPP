@@ -36,6 +36,7 @@ namespace VM
 		if (port == 0x20)
 		{
 			std::printf("%c", byte);
+			std::fflush(stdout);
 		}
 		else if (port == 0x21)
 		{
@@ -49,19 +50,31 @@ namespace VM
 		}
 	}
 
-	void DeviceConsole::handleOutbound(std::int_fast16_t port)
+	char DeviceConsole::handleOutbound(std::int_fast16_t port)
 	{
 		if (port == 0x20)
 		{
+			char ch = '\0';
 			while (true)
 			{
-				char ch = worker->getCharacter();
+				ch = worker->getCharacter();
 				if (ch != '\0')
 				{
 					break;
 				}
-				
+				std::this_thread::sleep_for(std::chrono::milliseconds(0));
 			}
+			return ch;
+		}
+		else if (port == 0x21)
+		{
+			return static_cast<int>(worker->dataReady());
+		}
+		else if (port == 0x22)
+		{
+			std::lock_guard<std::mutex> controlRegisterGuard(controlRegisterMutex);
+			auto res = controlRegister;
+			return res;
 		}
 	}
 

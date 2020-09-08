@@ -89,6 +89,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -119,6 +120,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -146,17 +148,21 @@
     <ClCompile Include="ColdwindVMCPP.cpp" />
     <ClCompile Include="ConsoleWorker.cpp" />
     <ClCompile Include="DeviceConsole.cpp" />
+    <ClCompile Include="DeviceTimer.cpp" />
     <ClCompile Include="GeneralPurposeRegister.cpp" />
     <ClCompile Include="Instance.cpp" />
     <ClCompile Include="Memory.cpp" />
+    <ClCompile Include="TimerWorker.cpp" />
     <ClCompile Include="vm_instr.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ConsoleWorker.h" />
     <ClInclude Include="DeviceConsole.h" />
+    <ClInclude Include="DeviceTimer.h" />
     <ClInclude Include="GeneralPurposeRegister.h" />
     <ClInclude Include="Instance.h" />
     <ClInclude Include="Memory.h" />
+    <ClInclude Include="TimerWorker.h" />
     <ClInclude Include="vm_instr.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

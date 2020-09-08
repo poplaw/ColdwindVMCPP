@@ -33,7 +33,7 @@ namespace VM
 			FLAG_ZF = (1 << 0),
 			FLAG_CF = (1 << 1),
 			CREG_INT_FIRST = 0x100,
-			CREG_INT_LAST = 0x01f,
+			CREG_INT_LAST = 0x10f,
 			CREG_INT_CONTROL = 0x110;
 
 		const int MASKABLE_INTS[2] = { 8, 9 };
@@ -46,7 +46,7 @@ namespace VM
 		Memory mem;
 		bool terminated = false;
 		std::map <std::int_fast16_t, InstructionSignature>& opcodes = vm_opcodes;
-		std::map<std::int_fast32_t, std::int_fast32_t> cr;
+		std::map<std::uint_fast32_t, std::uint_fast32_t> cr;
 		DeviceConsole *deviceConsole;
 		std::map<std::int_fast16_t, DeviceConsole*> io;
 		std::vector<std::int_fast16_t> interruptQueue;

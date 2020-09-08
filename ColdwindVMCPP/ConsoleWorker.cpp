@@ -10,30 +10,35 @@ namespace VM
 
 	void ConsoleWorker::run()
 	{
-		shutdown.wait(shutdownLock, [this] {return ready; });
+		//shutdown.wait(shutdownLock, [this] {return ready; });
 
-		char buffer[1];
-		auto ch = fread(buffer, 1, 1, stdin);
-		if (ch == '\0')
+		while (!ready)
 		{
-			return;
+			char buffer[1];
+			fread(buffer, sizeof(char), 1, stdin);
+			auto ch = buffer[0];
+			if (ch == '\0')
+			{
+				return;
+			}
+
+			{
+				std::lock_guard<std::mutex> guard(queueMutex);
+				queue.emplace(ch);
+			}
+
+			consoleDev.newDataReady();
 		}
 
-		{
-			std::lock_guard<std::mutex> guard(queueMutex);
-			queue.emplace(ch);
-		}
-
-		consoleDev.newDataReady();
 	}
 
 	char ConsoleWorker::getCharacter()
 	{
-		char ch = '\0';
+		char ch = 0;
 		queueMutex.lock();
 		if (queue.size() > 0)
 		{
-			ch = queue.back();
+			ch = queue.front();
 			queue.pop();
 		}
 

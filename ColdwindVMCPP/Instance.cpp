@@ -3,7 +3,9 @@
 #include <iostream>
 #include <fstream>
 #include <array>
+#include <sstream>
 #include <iterator>
+#include <iomanip>
 
 namespace VM
 {
@@ -12,9 +14,9 @@ namespace VM
 	{
 		sp.value = 0x10000;
 
-		for (int i{ CREG_INT_FIRST }; i < CREG_INT_LAST + 1; ++i)
+		for (int i{ CREG_INT_FIRST }; i <= CREG_INT_LAST + 1; ++i)
 		{
-			cr[i] = 0xffffffff;
+			cr.insert(std::make_pair(i, 0xffffffff));
 		}
 
 		cr[CREG_INT_CONTROL] = 0;
@@ -72,6 +74,7 @@ namespace VM
 						break;
 					}
 				}
+
 				if (!contains)
 				{
 					auto value = interruptQueue[i];
@@ -96,7 +99,6 @@ namespace VM
 
 		auto tmp_sp = sp.value;
 
-		//remember about fr
 		for (const auto& r : this->r)
 		{
 			tmp_sp -= 4;
@@ -106,6 +108,18 @@ namespace VM
 				return false;
 			}
 		}
+
+		tmp_sp -= 4;
+		if (!mem.storeDword(tmp_sp, fr))
+		{
+			crash();
+			return false;
+		}
+
+		sp.value = tmp_sp;
+		pc.value = cr[CREG_INT_FIRST + (i.value() & 0xf)];
+		cr[CREG_INT_CONTROL] &= 0xfffffffe;
+		return true;
 	}
 
 	bool Instance::loadMemoryFromFile(std::int_fast32_t addr, std::string name)
@@ -139,7 +153,7 @@ namespace VM
 
 		if (opcodes.find(opcode.value()) == opcodes.end())
 		{
-			std::cout << opcode.value() << '\n';
+			interrupt(INT_GENERAL_ERROR);
 			return;
 		}
 
@@ -153,13 +167,12 @@ namespace VM
 
 		auto handler = opcodes[opcode.value()].handler;
 
-		/*std::string vs;
+		std::stringstream stream{};
 		std::for_each(argumentBytes.value().begin(), argumentBytes.value().end(),
-			[&vs](std::uint_fast8_t x)->void {vs += (int)x; }
+			[&stream](std::uint_fast8_t x)->void {stream << std::hex << std::setfill('0') << std::setw(2) << (int)x; }
 		);
 
-		std::cout << pc.value << '\t' << (int)opcode.value() << '\t' << vs << '\n';*/
-
+		//std::printf("%04x\t%s\t%s\n", pc.value, opcodes[opcode.value()].getName().c_str(), stream.str().c_str());
 		pc.value += (1 + length);
 		handler(*this, argumentBytes.value());
 	}
