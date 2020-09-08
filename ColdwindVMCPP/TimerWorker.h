@@ -13,19 +13,19 @@ namespace VM
 	class TimerWorker
 	{
 		std::mutex mutex;
-		Instance& instance;
-		std::chrono::milliseconds alarmTime;
-		std::chrono::milliseconds activationTime;
-		bool active;
-		std::chrono::milliseconds alarm;
+		Instance& vm;
+		std::int_fast32_t alarmTime;
+		std::int_fast32_t activationTime;
 
 	public:
-		std::condition_variable shutdown;
-		TimerWorker();
-		void setAlarm(const std::chrono::milliseconds& ms);
+		bool active;
+		std::int_fast32_t alarm;
+		TimerWorker(Instance& instance);
+		void setAlarm(std::int_fast32_t milliseconds);
 		void activate();
 		void deactivate();
-		std::chrono::milliseconds getCounter();
+		std::int_fast32_t getCounter();
+		void run();
 	};
 }
 

@@ -10,7 +10,7 @@
 namespace VM
 {
 	Instance::Instance()
-		: mem(Memory()), deviceConsole(new DeviceConsole(*this))
+		: mem(Memory()), deviceConsole(new DeviceConsole(*this)), deviceTimer(new DeviceTimer(*this))
 	{
 		sp.value = 0x10000;
 
@@ -29,6 +29,12 @@ namespace VM
 		);
 		io.insert(
 			std::make_pair(0x22, deviceConsole)
+		);
+		io.insert(
+			std::make_pair(0x70, deviceTimer)
+		);
+		io.insert(
+			std::make_pair(0x71, deviceTimer)
 		);
 	}
 

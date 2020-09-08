@@ -4,17 +4,19 @@
 #include <thread>
 
 #include "Instance.h"
+#include "TimerWorker.h"
+#include "Device.h"
 
 namespace VM
 {
 	extern class Instance;
-	extern class TimeWorker;
+	extern class TimerWorker;
 
-	class DeviceTimer
+	class DeviceTimer : public Device
 	{
 		std::thread* workerThread;
 		Instance& vm;
-		TimeWorker* worker;
+		TimerWorker* worker;
 		std::int_fast16_t controlRegister;
 		std::int_fast16_t remainingCounterValue;
 		bool hasCounterData = false;
@@ -22,8 +24,8 @@ namespace VM
 	public:
 		DeviceTimer(Instance& vm);
 		~DeviceTimer();
-		void handleInbound(std::int_fast16_t port, std::uint_fast8_t byte);
-		char handleOutbound(std::int_fast16_t port);
+		void handleInbound(std::int_fast16_t port, std::uint_fast8_t byte) override;
+		char handleOutbound(std::int_fast16_t port) override;
 		void terminate();
 	};
 }

@@ -2,18 +2,25 @@
 
 namespace VM
 {
-	void TimerWorker::setAlarm(const std::chrono::milliseconds& ms)
+	TimerWorker::TimerWorker(Instance& instance)
+		: vm(instance), alarmTime(0), activationTime(0), alarm(0), active(false)
 	{
-		alarm = ms;
+
+	}
+
+	void TimerWorker::setAlarm(std::int_fast32_t milliseconds)
+	{
+		alarm = milliseconds;
 	}
 
 	void TimerWorker::activate()
 	{
-		const auto currentTime = std::chrono::system_clock::now();
+		const auto timeSinceEpoch{ std::chrono::system_clock::now().time_since_epoch() };
+		const auto secondsSinceEpoch{ std::chrono::duration_cast<std::chrono::seconds>(timeSinceEpoch).count() };
 
 		std::lock_guard<std::mutex> timeGuard(mutex);
-		activationTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime.time_since_epoch());
-		alarmTime = activationTime + std::chrono::milliseconds((long)(alarm.count() / 1000.0));
+		activationTime = secondsSinceEpoch;
+		alarmTime = activationTime + alarm / 1000.0;
 		active = true;
 	}
 
@@ -23,14 +30,40 @@ namespace VM
 		active = false;
 	}
 
-	std::chrono::milliseconds TimerWorker::getCounter()
+	std::int_fast32_t TimerWorker::getCounter()
 	{
 		std::lock_guard<std::mutex> timeGuard(mutex);
 
-		const auto currentTime = std::chrono::system_clock::now();
+		const auto timeSinceEpoch{ std::chrono::system_clock::now().time_since_epoch() };
+		const auto secondsSinceEpoch{ std::chrono::duration_cast<std::chrono::seconds>(timeSinceEpoch).count() };
 
-		//const auto res {(int)()}
+		const auto res{ static_cast<std::int_fast32_t>((secondsSinceEpoch - alarmTime) * 1000)};
 
-		return std::chrono::milliseconds();
+		return res;
+	}
+
+	void TimerWorker::run()
+	{
+		using namespace std::chrono_literals;
+
+		while (active)
+		{
+			const auto timeSinceEpoch{ std::chrono::system_clock::now().time_since_epoch() };
+			const auto secondsSinceEpoch{ std::chrono::duration_cast<std::chrono::seconds>(timeSinceEpoch).count() };
+
+			mutex.lock();
+			if (active && secondsSinceEpoch >= alarmTime)
+			{
+				active = false;
+				mutex.unlock();
+				vm.interrupt(vm.INT_PIT);
+			}
+			else
+			{
+				mutex.unlock();
+			}
+
+			std::this_thread::sleep_for(0s);
+		}
 	}
 }

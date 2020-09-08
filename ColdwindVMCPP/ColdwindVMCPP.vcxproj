@@ -147,6 +147,7 @@
   <ItemGroup>
     <ClCompile Include="ColdwindVMCPP.cpp" />
     <ClCompile Include="ConsoleWorker.cpp" />
+    <ClCompile Include="Device.cpp" />
     <ClCompile Include="DeviceConsole.cpp" />
     <ClCompile Include="DeviceTimer.cpp" />
     <ClCompile Include="GeneralPurposeRegister.cpp" />
@@ -157,6 +158,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ConsoleWorker.h" />
+    <ClInclude Include="Device.h" />
     <ClInclude Include="DeviceConsole.h" />
     <ClInclude Include="DeviceTimer.h" />
     <ClInclude Include="GeneralPurposeRegister.h" />

@@ -2,7 +2,9 @@
 
 #include "Memory.h"
 #include "GeneralPurposeRegister.h"
+#include "Device.h"
 #include "DeviceConsole.h"
+#include "DeviceTimer.h"
 #include "vm_instr.h"
 
 #include <cstdint>
@@ -17,6 +19,7 @@ namespace VM
 {
 	extern struct InstructionSignature;
 	extern class DeviceConsole;
+	extern class DeviceTimer;
 	extern std::map <std::int_fast16_t, InstructionSignature> vm_opcodes;
 
 	class Instance
@@ -48,7 +51,8 @@ namespace VM
 		std::map <std::int_fast16_t, InstructionSignature>& opcodes = vm_opcodes;
 		std::map<std::uint_fast32_t, std::uint_fast32_t> cr;
 		DeviceConsole *deviceConsole;
-		std::map<std::int_fast16_t, DeviceConsole*> io;
+		DeviceTimer* deviceTimer;
+		std::map<std::int_fast16_t, Device*> io;
 		std::vector<std::int_fast16_t> interruptQueue;
 		std::mutex interruptQueueMutex;
 		std::deque<std::function<void(void)>> deferedQueue;
