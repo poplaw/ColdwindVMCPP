@@ -51,7 +51,7 @@ namespace VM
 	{
 		auto dd = vm.mem.fetchDword(vm.reg(args[1]).value);
 
-		if (dd)
+		if (!dd)
 		{
 			vm.interrupt(vm.INT_MEMORY_ERROR);
 			return;
