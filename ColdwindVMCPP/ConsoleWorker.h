@@ -17,10 +17,9 @@ namespace VM
 		DeviceConsole& consoleDev;
 		std::mutex shutdownMutex;
 		std::unique_lock<std::mutex> shutdownLock;
-		bool ready;
 
 	public:
-		std::condition_variable shutdown;
+		bool ready;
 		ConsoleWorker(DeviceConsole& consoleDev);
 		void run();
 		char getCharacter();

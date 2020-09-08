@@ -10,8 +10,6 @@ namespace VM
 
 	void ConsoleWorker::run()
 	{
-		//shutdown.wait(shutdownLock, [this] {return ready; });
-
 		while (!ready)
 		{
 			char buffer[1];

@@ -80,6 +80,6 @@ namespace VM
 
 	void DeviceConsole::terminate()
 	{
-		worker->shutdown.notify_all();
+		worker->ready = true;
 	}
 }
